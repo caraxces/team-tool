@@ -21,6 +21,11 @@ app.use(express.json());
 // Serve static files from the 'public' directory
 app.use('/public', express.static(path.join(__dirname, '../public')));
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Server is running' });
+});
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const connectToDatabaseWithRetry = async (retries = 5) => {

@@ -1,166 +1,89 @@
-# Hướng dẫn Deploy Team Tool lên Render.com
+# Hướng dẫn Deploy Team Tool lên Render
 
-## Chuẩn bị
+## Cấu hình hiện tại
 
-### 1. Chuẩn bị Database MySQL
-- **Railway**: Tạo MySQL database (có free tier)
-- **PlanetScale**: MySQL serverless platform
-- **AWS RDS**: Cho production
-- **Hoặc sử dụng PostgreSQL trên Render**
+Dự án này được cấu hình để deploy lên Render với 3 services:
 
-### 2. Tạo Database Schema
-Chạy script `backend/database.sql` trên database của bạn.
+1. **Backend Service** (`team-tool-backend`)
+2. **Frontend Service** (`team-tool-frontend`) 
+3. **Database** (`team-tool-db`)
 
-## Deploy Backend trên Render
+## Các bước deploy
 
-### Bước 1: Tạo Web Service cho Backend
-1. Truy cập [render.com](https://render.com)
-2. Kết nối GitHub repository
-3. Tạo "New Web Service"
-4. Chọn repository `team-tool`
+### 1. Chuẩn bị
 
-### Bước 2: Cấu hình Backend Service
-**Build & Deploy:**
-- **Root Directory**: `backend`
-- **Runtime**: `Node`
+- Đảm bảo code đã được push lên GitHub
+- Có tài khoản Render.com
+
+### 2. Deploy lên Render
+
+1. Đăng nhập vào [Render.com](https://render.com)
+2. Click "New" → "Blueprint"
+3. Connect với GitHub repository
+4. Render sẽ tự động detect file `render.yaml` và tạo 3 services
+
+### 3. Cấu hình Services
+
+#### Backend Service
+- **Name**: team-tool-backend
+- **Runtime**: Node.js
 - **Build Command**: `npm install && npm run build`
 - **Start Command**: `npm start`
+- **Health Check**: `/api/health`
 
-**Environment Variables:**
-```
-NODE_ENV=production
-PORT=10000
-DB_HOST=your-mysql-host
-DB_USER=your-mysql-user
-DB_PASSWORD=your-mysql-password
-DB_NAME=your-database-name
-DB_PORT=3306
-JWT_SECRET=your-jwt-secret-here
-```
-
-### Bước 3: Deploy Backend
-- Click "Create Web Service"
-- Đợi build và deploy hoàn thành
-- Lưu lại URL backend (ví dụ: `https://team-tool-backend.onrender.com`)
-
-## Deploy Frontend trên Render
-
-### Bước 1: Tạo Static Site cho Frontend
-1. Trong Render dashboard, click "New Static Site"
-2. Chọn cùng repository `team-tool`
-
-### Bước 2: Cấu hình Frontend Service
-**Build & Deploy:**
-- **Root Directory**: `frontend`
+#### Frontend Service  
+- **Name**: team-tool-frontend
+- **Runtime**: Node.js
 - **Build Command**: `npm install && npm run build`
-- **Publish Directory**: `.next`
+- **Start Command**: `npm start`
+- **Health Check**: `/`
 
-**Environment Variables:**
-```
-NODE_ENV=production
-NEXT_PUBLIC_API_URL=https://your-backend-url.onrender.com/api
-BACKEND_URL=https://your-backend-url.onrender.com
-```
+#### Database
+- **Name**: team-tool-db
+- **Type**: MySQL
+- **Plan**: Free
 
-### Bước 3: Deploy Frontend
-- Click "Create Static Site"
-- Đợi build và deploy hoàn thành
+### 4. Environment Variables
 
-## Deploy Full Stack cùng một Service (Khuyến nghị)
+Backend sẽ tự động nhận các biến môi trường từ database:
+- `DB_HOST`
+- `DB_USER` 
+- `DB_PASSWORD`
+- `DB_NAME`
+- `DB_PORT`
 
-### Cách 1: Monorepo Deployment
-**Build & Deploy Settings:**
-- **Root Directory**: `/` (root)
-- **Build Command**: `chmod +x render-build.sh && ./render-build.sh`
-- **Start Command**: `cd frontend && npm start`
+Frontend sẽ có:
+- `NEXT_PUBLIC_API_URL`: URL của backend service
 
-### Cách 2: Sử dụng render.yaml (Khuyến nghị nhất)
-1. Commit file `render.yaml` trong root directory
-2. Render sẽ tự động detect và sử dụng cấu hình này
+### 5. URLs
 
-### Cách 3: Build Command thủ công (Nếu script không work)
-- **Build Command**: `cd frontend && npm ci --only=production && npm run build`
-- **Start Command**: `cd frontend && npm start`
-
-**Environment Variables:**
-```
-NODE_ENV=production
-PORT=10000
-DB_HOST=your-mysql-host
-DB_USER=your-mysql-user
-DB_PASSWORD=your-mysql-password
-DB_NAME=your-database-name
-DB_PORT=3306
-JWT_SECRET=your-jwt-secret-key
-NEXT_PUBLIC_API_URL=https://your-app.onrender.com/api
-```
+Sau khi deploy thành công:
+- **Frontend**: https://team-tool-frontend.onrender.com
+- **Backend**: https://team-tool-backend.onrender.com
+- **API**: https://team-tool-backend.onrender.com/api
 
 ## Troubleshooting
 
-### Lỗi "No open ports detected"
-**Giải pháp:**
-1. Đảm bảo backend listen trên `0.0.0.0:PORT`
-2. Kiểm tra PORT environment variable
-3. Sử dụng PORT từ `process.env.PORT`
+### Lỗi thường gặp
 
-### Lỗi "Could not find production build"
-**Giải pháp:**
-1. Build command phải chạy `npm run build` trước
-2. Kiểm tra build command: `cd frontend && npm ci --only=production && npm run build`
-3. Start command: `cd frontend && npm start`
+1. **Build failed**: Kiểm tra logs để xem lỗi cụ thể
+2. **Database connection failed**: Đảm bảo database đã được tạo và environment variables đúng
+3. **Health check failed**: Kiểm tra endpoint `/api/health` có hoạt động không
 
-### Lỗi "Ran out of memory" hoặc "Infinite loop"
-**Giải pháp:**
-1. **KHÔNG sử dụng** `postinstall` script trong root package.json
-2. Sử dụng `npm ci --only=production` thay vì `npm install`
-3. Build command đúng: `cd frontend && npm ci --only=production && npm run build`
-4. Đảm bảo không có circular dependencies trong build process
+### Kiểm tra logs
 
-### Database Connection Issues
-**Giải pháp:**
-1. Kiểm tra database URL và credentials
-2. Whitelist Render IP ranges: `0.0.0.0/0`
-3. Test connection strings
+- Vào dashboard của từng service trên Render
+- Click vào "Logs" để xem chi tiết lỗi
 
-### API Routing Issues
-**Giải pháp:**
-1. Đảm bảo NEXT_PUBLIC_API_URL đúng
-2. Kiểm tra CORS configuration
-3. Test API endpoints: `/api/health`
+## Cập nhật
 
-## Script Commands
+Để cập nhật ứng dụng:
+1. Push code mới lên GitHub
+2. Render sẽ tự động trigger rebuild
+3. Hoặc manual trigger từ dashboard
 
-### Build Commands
-```bash
-# Cho frontend only
-cd frontend && npm install && npm run build
+## Lưu ý
 
-# Cho full stack
-npm run render-build
-```
-
-### Start Commands
-```bash
-# Cho frontend only
-cd frontend && npm start
-
-# Cho full stack
-npm run render-start
-```
-
-## Monitor & Logs
-- Render cung cấp real-time logs
-- Set up alerts cho service downtime
-- Monitor database connections
-
-## Performance Tips
-1. **Enable caching** cho static assets
-2. **Optimize build size** bằng tree shaking
-3. **Database connection pooling**
-4. **CDN** cho images và static files
-
-## Security
-- Luôn sử dụng HTTPS
-- Keep secrets trong environment variables
-- Regular dependency updates
-- Monitor security alerts 
+- Free plan có giới hạn về resources
+- Database sẽ sleep sau 90 phút không sử dụng
+- Services sẽ sleep sau 15 phút không có traffic 
