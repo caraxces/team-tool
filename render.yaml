@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: team-tool-fullstack
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: |
+      cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    # Add your environment variables:
+    # - key: NEXT_PUBLIC_API_URL
+    #   value: https://your-backend-url/api
+    # - key: DB_HOST
+    #   value: your-db-host
+    # etc... 

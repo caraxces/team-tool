@@ -71,8 +71,12 @@ BACKEND_URL=https://your-backend-url.onrender.com
 ### Cách 1: Monorepo Deployment
 **Build & Deploy Settings:**
 - **Root Directory**: `/` (root)
-- **Build Command**: `npm run render-build`
-- **Start Command**: `npm run render-start`
+- **Build Command**: `cd frontend && npm install && npm run build`
+- **Start Command**: `cd frontend && npm start`
+
+### Cách 2: Sử dụng render.yaml (Khuyến nghị nhất)
+1. Commit file `render.yaml` trong root directory
+2. Render sẽ tự động detect và sử dụng cấu hình này
 
 **Environment Variables:**
 ```
