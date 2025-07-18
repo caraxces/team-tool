@@ -5,7 +5,9 @@ services:
     plan: free
     rootDir: .
     buildCommand: |
-      cd frontend && npm install && npm run build
+      cd frontend
+      npm ci --only=production
+      npm run build
     startCommand: cd frontend && npm start
     healthCheckPath: /
     envVars:

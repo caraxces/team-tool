@@ -8,8 +8,7 @@
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "render-build": "cd frontend && npm install && npm run build",
-    "render-start": "cd frontend && npm start",
-    "postinstall": "cd frontend && npm install && npm run build"
+    "render-start": "cd frontend && npm start"
   },
   "workspaces": [
     "frontend",

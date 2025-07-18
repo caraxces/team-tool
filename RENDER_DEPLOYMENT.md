@@ -71,7 +71,7 @@ BACKEND_URL=https://your-backend-url.onrender.com
 ### Cách 1: Monorepo Deployment
 **Build & Deploy Settings:**
 - **Root Directory**: `/` (root)
-- **Build Command**: `cd frontend && npm install && npm run build`
+- **Build Command**: `cd frontend && npm ci --only=production && npm run build`
 - **Start Command**: `cd frontend && npm start`
 
 ### Cách 2: Sử dụng render.yaml (Khuyến nghị nhất)
@@ -102,8 +102,15 @@ NEXT_PUBLIC_API_URL=https://your-app.onrender.com/api
 ### Lỗi "Could not find production build"
 **Giải pháp:**
 1. Build command phải chạy `npm run build` trước
-2. Kiểm tra build command: `cd frontend && npm install && npm run build`
+2. Kiểm tra build command: `cd frontend && npm ci --only=production && npm run build`
 3. Start command: `cd frontend && npm start`
+
+### Lỗi "Ran out of memory" hoặc "Infinite loop"
+**Giải pháp:**
+1. **KHÔNG sử dụng** `postinstall` script trong root package.json
+2. Sử dụng `npm ci --only=production` thay vì `npm install`
+3. Build command đúng: `cd frontend && npm ci --only=production && npm run build`
+4. Đảm bảo không có circular dependencies trong build process
 
 ### Database Connection Issues
 **Giải pháp:**
