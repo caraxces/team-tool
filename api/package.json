@@ -1,18 +1,7 @@
 {
-  "name": "backend",
+  "name": "team-tool-api",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "npx tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
-    "vercel-build": "npx tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "main": "index.ts",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
@@ -38,8 +27,6 @@
     "@types/node": "^20.14.12",
     "@types/nodemailer": "^6.4.17",
     "@types/uuid": "^10.0.0",
-    "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
-}
+} 
