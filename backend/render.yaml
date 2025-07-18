@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: team-tool-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    # Add your environment variables here:
+    # - key: DB_HOST
+    #   value: your-db-host
+    # - key: DB_USER
+    #   value: your-db-user
+    # etc... 
