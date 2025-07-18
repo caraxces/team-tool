@@ -4,10 +4,7 @@ services:
     runtime: node
     plan: free
     rootDir: .
-    buildCommand: |
-      cd frontend
-      npm ci --only=production
-      npm run build
+    buildCommand: chmod +x render-build.sh && ./render-build.sh
     startCommand: cd frontend && npm start
     healthCheckPath: /
     envVars:
