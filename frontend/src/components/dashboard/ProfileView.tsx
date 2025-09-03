@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { UserCircle, Lock, Edit3, Camera } from 'lucide-react';
@@ -15,6 +15,7 @@ const ProfileView = () => {
     const [passwordStep, setPasswordStep] = useState<PasswordFormStep>('request');
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     
     const { register: registerInfo, handleSubmit: handleSubmitInfo, formState: { isSubmitting: isInfoSubmitting } } = useForm({
         defaultValues: {
@@ -81,7 +82,12 @@ const ProfileView = () => {
         }
     };
 
-    const avatarUrl = authState.user?.avatarUrl ? `http://localhost:3001${authState.user.avatarUrl}?t=${new Date().getTime()}` : null;
+    useEffect(() => {
+        // When the component mounts, check if the user has an avatarUrl and set it for preview
+        // Also append a timestamp to the URL to bypass browser cache
+        const avatarUrl = authState.user?.avatarUrl ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${authState.user.avatarUrl}?t=${new Date().getTime()}` : null;
+        setAvatarPreview(avatarUrl);
+    }, [authState.user?.avatarUrl]);
 
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 text-white">
@@ -93,8 +99,8 @@ const ProfileView = () => {
                         disabled={isUploading}
                         title="Change Avatar"
                     >
-                        {avatarUrl ? (
-                            <img src={avatarUrl} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
+                        {avatarPreview ? (
+                            <img src={avatarPreview} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
                         ) : (
                             <UserCircle className="w-16 h-16 text-gray-400" />
                         )}

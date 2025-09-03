@@ -20,7 +20,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 
 const MemberCard = ({ member, onStartChat, unreadCount }: { member: User, onStartChat: (member: User) => void, unreadCount: number }) => {
-    const avatarFullUrl = member.avatarUrl ? `http://localhost:3001${member.avatarUrl}` : `https://i.pravatar.cc/150?u=${member.id}`;
+    const avatarFullUrl = member.avatarUrl ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${member.avatarUrl}` : `https://i.pravatar.cc/150?u=${member.id}`;
     return (
         <motion.div 
             layoutId={`member-card-${member.id}`}
@@ -110,7 +110,7 @@ const ExpandedChatView = ({
         }
     };
     
-    const memberAvatarFullUrl = member.avatarUrl ? `http://localhost:3001${member.avatarUrl}` : `https://i.pravatar.cc/150?u=${member.id}`;
+    const memberAvatarFullUrl = member.avatarUrl ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${member.avatarUrl}` : `https://i.pravatar.cc/150?u=${member.id}`;
 
     return (
          <motion.div 
@@ -136,7 +136,7 @@ const ExpandedChatView = ({
             <div className="flex-grow p-4 overflow-y-auto custom-scrollbar">
                 <div className="space-y-4">
                     {messages.map((msg) => {
-                        const senderAvatarFullUrl = msg.sender.avatarUrl ? `http://localhost:3001${msg.sender.avatarUrl}` : `https://i.pravatar.cc/150?u=${msg.sender.id}`;
+                        const senderAvatarFullUrl = msg.sender.avatarUrl ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${msg.sender.avatarUrl}` : `https://i.pravatar.cc/150?u=${msg.sender.id}`;
                         return (
                             <div key={msg.uuid} className={`flex items-end gap-3 ${msg.sender.id !== member.id ? 'flex-row-reverse' : ''}`}>
                             <img src={senderAvatarFullUrl} alt="avatar" className="w-8 h-8 rounded-full object-cover" />
@@ -440,7 +440,7 @@ const TeamManagementView = () => {
                                 All Members
                             </button>
                             {members.filter(m => m.id !== activeChatMember.id).map(member => {
-                                const sidebarAvatarUrl = member.avatarUrl ? `http://localhost:3001${member.avatarUrl}` : `https://i.pravatar.cc/150?u=${member.id}`;
+                                const sidebarAvatarUrl = member.avatarUrl ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${member.avatarUrl}` : `https://i.pravatar.cc/150?u=${member.id}`;
                                 const unreadCount = unreadCounts?.[member.id] || 0;
                                 return (
                                 <div 

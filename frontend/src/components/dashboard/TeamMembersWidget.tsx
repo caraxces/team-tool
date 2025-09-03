@@ -10,22 +10,19 @@ const TeamMembersWidget = ({ members, onInvite }: { members: User[], onInvite: (
         Team Members
       </h3>
       <div className="flex-grow space-y-4 overflow-y-auto custom-scrollbar -mr-3 pr-3">
-        {members.slice(0, 7).map(member => {
-          const avatarUrl = member.avatarUrl ? `http://localhost:3001${member.avatarUrl}` : `https://i.pravatar.cc/40?u=${member.id}`;
-          return (
-            <div key={member.id} className="flex items-center">
+        <div className="flex -space-x-4">
+          {members.slice(0, 5).map((member) => {
+            const avatarUrl = member.avatarUrl ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${member.avatarUrl}` : `https://i.pravatar.cc/40?u=${member.id}`;
+            return (
               <img
+                key={member.id}
                 src={avatarUrl}
                 alt={member.fullName}
                 className="w-10 h-10 rounded-full mr-4 object-cover"
               />
-              <div>
-                <p className="font-semibold">{member.fullName}</p>
-                <p className="text-sm text-gray-400">{member.email}</p>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
       <div className="mt-4 pt-4 border-t border-white/10">
         <button
