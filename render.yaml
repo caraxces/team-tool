@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: team-tool-backend
+    env: node
+    rootDir: backend
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: team-tool-db
+          property: connectionString
+      # Thêm các biến môi trường khác của bạn ở đây
+      # - key: JWT_SECRET
+      #   value: "YOUR_SECRET_KEY"
+
+databases:
+  - name: team-tool-db
+    databaseName: team_tool_db
+    user: team_tool_user
+    plan: free # 'free' tier có thể không được hỗ trợ ở tất cả các khu vực, bạn có thể cần thay đổi
