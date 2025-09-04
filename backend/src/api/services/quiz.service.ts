@@ -248,7 +248,29 @@ export const submitQuizAnswers = async (
         }
         const assignment = assignmentRows[0];
 
-        // 2. Fetch all correct answers for the entire quiz
+        // 2. Prepare user answers for insertion
+        const userAnswersToInsert = Object.entries(answers).flatMap(([questionId, optionIds]) => {
+            // Assuming single choice, so optionIds is an array with one element
+            const selectedOptionId = optionIds[0];
+            if (selectedOptionId === undefined) {
+                return []; // Skip if no answer for a question
+            }
+            return [[
+                assignmentId,
+                parseInt(questionId, 10),
+                selectedOptionId
+            ]];
+        });
+
+        // 3. Insert all user answers into the new table
+        if (userAnswersToInsert.length > 0) {
+            await connection.query(
+                'INSERT INTO user_quiz_answers (assignment_id, question_id, selected_option_id) VALUES ?',
+                [userAnswersToInsert]
+            );
+        }
+
+        // 4. Fetch all correct answers for the entire quiz
         const [correctOptions] = await connection.query<RowDataPacket[]>(
             `SELECT q.id as question_id, o.id as option_id
              FROM quiz_questions q
@@ -265,7 +287,7 @@ export const submitQuizAnswers = async (
             correctAnswers[row.question_id].push(row.option_id);
         });
 
-        // 3. Calculate score
+        // 5. Calculate score
         let correctCount = 0;
         const totalQuestions = Object.keys(correctAnswers).length;
 
@@ -282,7 +304,7 @@ export const submitQuizAnswers = async (
         const score = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
         const finalScore = parseFloat(score.toFixed(2));
 
-        // 4. Update the assignment record
+        // 6. Update the assignment record
         await connection.query(
             'UPDATE quiz_assignments SET status = "completed", score = ?, completed_at = NOW() WHERE id = ?',
             [finalScore, assignmentId]

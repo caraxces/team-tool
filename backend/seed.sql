@@ -14,6 +14,10 @@ SET FOREIGN_KEY_CHECKS=0;
 TRUNCATE TABLE `template_tasks`;
 TRUNCATE TABLE `template_projects`;
 TRUNCATE TABLE `templates`;
+TRUNCATE TABLE `quiz_assignments`;
+TRUNCATE TABLE `question_options`;
+TRUNCATE TABLE `quiz_questions`;
+TRUNCATE TABLE `quizzes`;
 TRUNCATE TABLE `users`;
 TRUNCATE TABLE `roles`;
 
@@ -151,3 +155,64 @@ INSERT INTO `template_tasks` (
     2, 'Monthly Performance Report', 'Compile and send a report on traffic, rankings, and other KPIs.',
     30, 1 -- Occurs on day 30 of this phase
 );
+
+-- =================================================================
+-- Team-Tool Quiz Seed Data
+-- =================================================================
+-- This section contains sample data for quizzes, questions, options, and assignments.
+-- It will also DELETE existing data in these tables before insertion.
+-- =================================================================
+
+-- Clean up in order of dependency to respect foreign key constraints.
+-- TRUNCATE TABLE `quiz_assignments`;
+-- TRUNCATE TABLE `question_options`;
+-- TRUNCATE TABLE `quiz_questions`;
+-- TRUNCATE TABLE `quizzes`;
+
+
+-- =================================================================
+-- Insert Sample Quiz
+-- =================================================================
+-- Created by the Team Lead (user_id = 3).
+INSERT INTO `quizzes` (`id`, `title`, `description`, `created_by`) VALUES
+(1, 'SEO Fundamentals Assessment', 'A quiz to test fundamental knowledge of Search Engine Optimization.', 3);
+
+-- =================================================================
+-- Insert Quiz Questions
+-- =================================================================
+INSERT INTO `quiz_questions` (`id`, `quiz_id`, `question_text`, `question_type`) VALUES
+(1, 1, 'Which of the following is considered the most important on-page SEO factor?', 'single_choice'),
+(2, 1, 'What is the primary purpose of a robots.txt file?', 'single_choice'),
+(3, 1, 'Which of the following is an example of off-page SEO?', 'single_choice');
+
+-- =================================================================
+-- Insert Question Options
+-- =================================================================
+-- Options for Question 1
+INSERT INTO `question_options` (`question_id`, `option_text`, `is_correct`) VALUES
+(1, 'The number of images on the page.', 0),
+(1, 'The meta description length.', 0),
+(1, 'The quality and relevance of the page content.', 1),
+(1, 'The number of outbound links.', 0);
+
+-- Options for Question 2
+INSERT INTO `question_options` (`question_id`, `option_text`, `is_correct`) VALUES
+(2, 'To provide a list of all pages on your website to search engines.', 0),
+(2, 'To tell search engine crawlers which pages or files the crawler can or can’t request from your site.', 1),
+(2, 'To submit your site to Google for indexing.', 0),
+(2, 'To block your website from all search engines entirely.', 0);
+
+-- Options for Question 3
+INSERT INTO `question_options` (`question_id`, `option_text`, `is_correct`) VALUES
+(3, 'Optimizing title tags and meta descriptions.', 0),
+(3, 'Building high-quality backlinks from other websites.', 1),
+(3, 'Improving website loading speed.', 0),
+(3, 'Using relevant keywords in your page content.', 0);
+
+-- =================================================================
+-- Insert Quiz Assignment
+-- =================================================================
+-- Assigning the SEO quiz to the 'Regular Member' (user_id = 4)
+-- Assigned by the Team Lead (user_id = 3)
+INSERT INTO `quiz_assignments` (`quiz_id`, `user_id`, `assigned_by_id`, `status`) VALUES
+(1, 4, 3, 'pending');
