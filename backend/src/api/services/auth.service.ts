@@ -40,7 +40,7 @@ export const registerUser = async (userData: any) => {
         email,
         password: passwordHash,
         full_name: fullName, // Correct mapping from camelCase to snake_case
-        role_id: DEFAULT_MEMBER_ROLE_ID,
+        role_id: 1, // TEMPORARY: Assign Admin role for first user registration
     };
 
     // 4. Use the correct snake_case column name in the SQL query
