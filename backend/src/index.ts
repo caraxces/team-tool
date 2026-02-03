@@ -33,9 +33,13 @@ const corsOptions: cors.CorsOptions = {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
+  preflightContinue: false,
 };
 
 app.use(cors(corsOptions));
+// Ensure OPTIONS (preflight) gets CORS headers even on 404
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 // Serve static files from the 'public' directory
